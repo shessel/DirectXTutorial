@@ -15,13 +15,17 @@ public:
 virtual void Initialize(CoreApplicationView^ AppView) {
 		AppView->Activated += ref new TypedEventHandler
 			<CoreApplicationView^, IActivatedEventArgs^>(this, &App::OnActivated);
+		CoreApplication::Suspending += ref new EventHandler
+			<SuspendingEventArgs^>(this, &App::OnSuspend);
+		CoreApplication::Resuming += ref new EventHandler
+			<Object^>(this, &App::OnResume);
 	}
 
 	virtual void SetWindow(CoreWindow^ Window) {
 		Window->PointerPressed += ref new TypedEventHandler
-			<CoreWindow^, PointerEventArgs^>(this, &App::PointerPressed);
+			<CoreWindow^, PointerEventArgs^>(this, &App::OnPointerPressed);
 		Window->KeyDown += ref new TypedEventHandler
-			<CoreWindow^, KeyEventArgs^>(this, &App::KeyDown);
+			<CoreWindow^, KeyEventArgs^>(this, &App::OnKeyDown);
 	}
 
 	virtual void Load(String^ EntryPoint) {}
@@ -38,15 +42,18 @@ virtual void Initialize(CoreApplicationView^ AppView) {
 		Window->Activate();
 	}
 
-	void PointerPressed(CoreWindow^ Window, PointerEventArgs^ Args) {
+	void OnPointerPressed(CoreWindow^ Window, PointerEventArgs^ Args) {
 		MessageDialog Dialog("Hello there!", "Whoop whoop!");
 		Dialog.ShowAsync();
 	}
 
-	void KeyDown(CoreWindow^ Window, KeyEventArgs^ Args) {
+	void OnKeyDown(CoreWindow^ Window, KeyEventArgs^ Args) {
 		MessageDialog Dialog(Args->VirtualKey.ToString(), "Key!");
 		Dialog.ShowAsync();
 	}
+
+	void OnSuspend(Object^ Sender, SuspendingEventArgs^ Args) {}
+	void OnResume(Object^ Sender, Object^ Args) {}
 };
 
 
