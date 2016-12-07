@@ -11,6 +11,7 @@ using namespace Windows::Graphics::Display;
 using namespace Platform;
 
 ref class App sealed : public IFrameworkView {
+	bool windowClosed;
 public:
 virtual void Initialize(CoreApplicationView^ AppView) {
 		AppView->Activated += ref new TypedEventHandler
@@ -19,6 +20,7 @@ virtual void Initialize(CoreApplicationView^ AppView) {
 			<SuspendingEventArgs^>(this, &App::OnSuspend);
 		CoreApplication::Resuming += ref new EventHandler
 			<Object^>(this, &App::OnResume);
+		windowClosed = false;
 	}
 
 	virtual void SetWindow(CoreWindow^ Window) {
@@ -26,13 +28,17 @@ virtual void Initialize(CoreApplicationView^ AppView) {
 			<CoreWindow^, PointerEventArgs^>(this, &App::OnPointerPressed);
 		Window->KeyDown += ref new TypedEventHandler
 			<CoreWindow^, KeyEventArgs^>(this, &App::OnKeyDown);
+		Window->Closed += ref new TypedEventHandler
+			<CoreWindow^, CoreWindowEventArgs^>(this, &App::OnClose);
 	}
 
 	virtual void Load(String^ EntryPoint) {}
 
 	virtual void Run() {
 		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
-		Window->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessUntilQuit);
+		while (!windowClosed) {
+			Window->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
+		}
 	}
 
 	virtual void Uninitialize() {}
@@ -50,6 +56,10 @@ virtual void Initialize(CoreApplicationView^ AppView) {
 	void OnKeyDown(CoreWindow^ Window, KeyEventArgs^ Args) {
 		MessageDialog Dialog(Args->VirtualKey.ToString(), "Key!");
 		Dialog.ShowAsync();
+	}
+
+	void OnClose(CoreWindow^ Window, CoreWindowEventArgs^ Args) {
+		windowClosed = true;
 	}
 
 	void OnSuspend(Object^ Sender, SuspendingEventArgs^ Args) {}
