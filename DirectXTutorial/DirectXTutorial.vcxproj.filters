@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>3ed4882c-1d92-4c74-b5af-54cb828abed7</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>c69f8a26-21d2-4625-a0eb-2266c64afcb2</UniqueIdentifier>
+      <Extensions>bmp;fbx;gif;jpg;jpeg;tga;tiff;tif;png</Extensions>
+    </Filter>
+    <Filter Include="Content">
+      <UniqueIdentifier>a64b55cb-ab36-42ff-adf1-771c6abfdcf0</UniqueIdentifier>
+    </Filter>
+    <Image Include="Assets\LockScreenLogo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square150x150Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Wide310x150Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="App.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\StoreLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DirectXTutorial_TemporaryKey.pfx" />
+  </ItemGroup>
+</Project>
