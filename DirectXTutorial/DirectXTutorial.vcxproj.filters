@@ -50,4 +50,8 @@
   <ItemGroup>
     <None Include="DirectXTutorial_TemporaryKey.pfx" />
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="SimpleVertexShader.hlsl" />
+    <FxCompile Include="SimplePixelShader.hlsl" />
+  </ItemGroup>
 </Project>

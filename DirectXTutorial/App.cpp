@@ -32,6 +32,8 @@ virtual void Initialize(CoreApplicationView^ AppView) {
 			<CoreWindow^, KeyEventArgs^>(this, &App::OnKeyDown);
 		Window->Closed += ref new TypedEventHandler
 			<CoreWindow^, CoreWindowEventArgs^>(this, &App::OnClose);
+		Window->SizeChanged += ref new TypedEventHandler
+			<CoreWindow^, WindowSizeChangedEventArgs^>(this, &App::OnSizeChanged);
 	}
 
 	virtual void Load(String^ EntryPoint) {}
@@ -65,6 +67,10 @@ virtual void Initialize(CoreApplicationView^ AppView) {
 
 	void OnClose(CoreWindow^ Window, CoreWindowEventArgs^ Args) {
 		windowClosed = true;
+	}
+
+	void OnSizeChanged(CoreWindow^ Window, WindowSizeChangedEventArgs^ Args) {
+		demo.Resize();
 	}
 
 	void OnSuspend(Object^ Sender, SuspendingEventArgs^ Args) {}
