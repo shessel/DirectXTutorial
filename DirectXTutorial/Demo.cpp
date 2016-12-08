@@ -21,7 +21,7 @@ void Demo::Initialize() {
 	context.As(&this->deviceContext);
 
 	ComPtr<IDXGIDevice1> dxgiDevice;
-	device.As(&dxgiDevice);
+	this->device.As(&dxgiDevice);
 
 	ComPtr<IDXGIAdapter> dxgiAdapter;
 	dxgiDevice->GetAdapter(&dxgiAdapter);
@@ -44,11 +44,18 @@ void Demo::Initialize() {
 		nullptr,
 		&this->swapChain
 	);
+
+	ComPtr<ID3D11Texture2D> backbuffer;
+	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), &backbuffer);
+	this->device->CreateRenderTargetView(backbuffer.Get(), nullptr, &renderTargetView);
 }
 
 void Demo::Update() {
 }
 
 void Demo::Render() {
+	deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), nullptr);
+	float color[4] = { 0.1f, 0.2f, 0.3f, 1.0f };
+	deviceContext->ClearRenderTargetView(renderTargetView.Get(), color);
 	swapChain->Present(1, 0);
 }
