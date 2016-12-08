@@ -7,6 +7,7 @@ using namespace DirectX;
 class Demo {
 	ComPtr<ID3D11Device1> device;
 	ComPtr<ID3D11DeviceContext1> deviceContext;
+	ComPtr<IDXGISwapChain1> swapChain;
 
 public:
 	void Initialize();
