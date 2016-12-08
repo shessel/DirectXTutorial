@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "Demo.h"
 
 using namespace Windows::ApplicationModel;
 using namespace Windows::ApplicationModel::Core;
@@ -12,6 +13,7 @@ using namespace Platform;
 
 ref class App sealed : public IFrameworkView {
 	bool windowClosed;
+	Demo demo;
 public:
 virtual void Initialize(CoreApplicationView^ AppView) {
 		AppView->Activated += ref new TypedEventHandler
@@ -35,9 +37,12 @@ virtual void Initialize(CoreApplicationView^ AppView) {
 	virtual void Load(String^ EntryPoint) {}
 
 	virtual void Run() {
+		demo.Initialize();
 		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
 		while (!windowClosed) {
 			Window->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
+			demo.Update();
+			demo.Render();
 		}
 	}
 
