@@ -22,9 +22,13 @@ std::vector<byte> LoadShaderFile(std::string fileName) {
 }
 
 void Demo::Initialize() {
+	InitializeDeviceDependentResources();
+	InitializeWindowSizeDependentResources();
+}
+
+void Demo::InitializeDeviceDependentResources() {
 	InitializeDeviceAndDeviceContext();
 	InitializeSwapChain();
-	UpdateViewport();
 	InitializeData();
 	InitializePipeline();
 }
@@ -57,7 +61,7 @@ void Demo::InitializeDeviceAndDeviceContext() {
 
 void Demo::InitializeSwapChain() {
 	ComPtr<IDXGIDevice1> dxgiDevice;
-	this->device.As(&dxgiDevice);
+	device.As(&dxgiDevice);
 
 	ComPtr<IDXGIAdapter> dxgiAdapter;
 	dxgiDevice->GetAdapter(&dxgiAdapter);
@@ -74,29 +78,12 @@ void Demo::InitializeSwapChain() {
 
 	CoreWindow^ Window = CoreWindow::GetForCurrentThread();
 	dxgiFactory->CreateSwapChainForCoreWindow(
-		this->device.Get(),
+		device.Get(),
 		reinterpret_cast<IUnknown*>(Window),
 		&swapChainDesc,
 		nullptr,
-		&this->swapChain
+		&swapChain
 	);
-
-	ComPtr<ID3D11Texture2D> backbuffer;
-	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), &backbuffer);
-	this->device->CreateRenderTargetView(backbuffer.Get(), nullptr, &renderTargetView);
-}
-
-void Demo::UpdateViewport() {
-	DisplayInformation^ displayInformation = DisplayInformation::GetForCurrentView();
-	float dpi = displayInformation->LogicalDpi;
-	CoreWindow^ Window = CoreWindow::GetForCurrentThread();
-
-	D3D11_VIEWPORT viewport = { 0 };
-	viewport.TopLeftX = 0;
-	viewport.TopLeftY = 0;
-	viewport.Width = Window->Bounds.Width * dpi / 96.0f;
-	viewport.Height = Window->Bounds.Height * dpi / 96.0f;
-	deviceContext->RSSetViewports(1, &viewport);
 }
 
 void Demo::InitializeData() {
@@ -140,12 +127,34 @@ void Demo::InitializePipeline() {
 	deviceContext->IASetInputLayout(inputLayout.Get());
 }
 
+void Demo::InitializeWindowSizeDependentResources() {
+	InitializeBackbuffer();
+	InitializeViewport();
+}
+
+void Demo::InitializeBackbuffer() {
+	ComPtr<ID3D11Texture2D> backbuffer;
+	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), &backbuffer);
+	device->CreateRenderTargetView(backbuffer.Get(), nullptr, &renderTargetView);
+}
+
+void Demo::InitializeViewport() {
+	DisplayInformation^ displayInformation = DisplayInformation::GetForCurrentView();
+	float dpi = displayInformation->LogicalDpi;
+	CoreWindow^ Window = CoreWindow::GetForCurrentThread();
+
+	D3D11_VIEWPORT viewport = { 0 };
+	viewport.TopLeftX = 0;
+	viewport.TopLeftY = 0;
+	viewport.Width = Window->Bounds.Width * dpi / 96.0f;
+	viewport.Height = Window->Bounds.Height * dpi / 96.0f;
+	deviceContext->RSSetViewports(1, &viewport);
+}
+
 void Demo::Update() {
 }
 
-void Demo::Render() {
-	deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), nullptr);
-	
+void Demo::Render() {	
 	float color[4] = { 0.1f, 0.2f, 0.3f, 1.0f };
 	deviceContext->ClearRenderTargetView(renderTargetView.Get(), color);
 	
@@ -153,18 +162,27 @@ void Demo::Render() {
 	UINT offset = 0;
 	deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	
+
+	deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), nullptr);
+
 	deviceContext->Draw(3, 0);
 
 	swapChain->Present(1, 0);
 }
 
 void Demo::Resize() {
-	HRESULT hr = swapChain->ResizeBuffers(
+	UnbindWindowSizeDependentResources();
+	swapChain->ResizeBuffers(
 		2,
 		0,
 		0,
 		DXGI_FORMAT_B8G8R8A8_UNORM,
 		0
 	);
+	InitializeWindowSizeDependentResources();
+}
+
+void Demo::UnbindWindowSizeDependentResources() {
+	deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
+	renderTargetView = nullptr;
 }
