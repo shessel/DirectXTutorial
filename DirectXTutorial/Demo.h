@@ -1,5 +1,7 @@
 #pragma once
 
+#include "DirectXMath.h"
+
 using namespace Microsoft::WRL;
 using namespace Windows::Graphics::Display;
 using namespace Windows::UI::Core;
@@ -31,9 +33,8 @@ class Demo {
 	void UnbindWindowSizeDependentResources();
 
 	struct Vertex {
-		float x;
-		float y;
-		float z;
+		XMFLOAT3 pos;
+		XMFLOAT3 col;
 	};
 
 public:

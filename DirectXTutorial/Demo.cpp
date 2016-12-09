@@ -93,9 +93,9 @@ void Demo::InitializeData() {
 
 void Demo::InitializeVertexBuffer() {
 	Vertex vertices[] = {
-		{ 0.0f, 0.5f, 0.5f },
-		{ 0.45f, -0.5f, 0.5f },
-		{ -0.45f, -0.5f, 0.5f }
+		{ { 0.0f, 0.5f, 0.5f }, {1.0f, 0.0f, 0.0f} },
+		{ { 0.45f, -0.5f, 0.5f },{ 1.0f, 0.0f, 0.0f } },
+		{ { -0.45f, -0.5f, 0.5f }, { 1.0f, 0.0f, 0.0f } }
 	};
 
 	D3D11_BUFFER_DESC bufferDesc = { 0 };
@@ -131,14 +131,25 @@ void Demo::InitializePipeline() {
 	deviceContext->VSSetShader(vertexShader.Get(), nullptr, 0);
 	deviceContext->PSSetShader(pixelShader.Get(), nullptr, 0);
 
-	D3D11_INPUT_ELEMENT_DESC inputElementDesc = { 0 };
-	inputElementDesc.SemanticName = "POSITION";
-	inputElementDesc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
-	inputElementDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+	D3D11_INPUT_ELEMENT_DESC positionInputElementDesc = { 0 };
+	positionInputElementDesc.SemanticName = "POSITION";
+	positionInputElementDesc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	positionInputElementDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+
+	D3D11_INPUT_ELEMENT_DESC color0InputElementDesc = { 0 };
+	color0InputElementDesc.SemanticName = "COLOR";
+	color0InputElementDesc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	color0InputElementDesc.AlignedByteOffset = 12;
+	color0InputElementDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+
+	D3D11_INPUT_ELEMENT_DESC inputElementDescriptors[] = {
+		positionInputElementDesc,
+		color0InputElementDesc
+	};
 
 	device->CreateInputLayout(
-		&inputElementDesc,
-		1,
+		inputElementDescriptors,
+		ARRAYSIZE(inputElementDescriptors),
 		vertexShaderData.data(),
 		vertexShaderData.size(),
 		&inputLayout
