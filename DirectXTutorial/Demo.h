@@ -14,9 +14,10 @@ class Demo {
 	ComPtr<ID3D11VertexShader> vertexShader;
 	ComPtr<ID3D11PixelShader> pixelShader;
 	ComPtr<ID3D11InputLayout> inputLayout;
-	
+
+	void InitializeDeviceAndDeviceContext();
 	void InitializeSwapChain();
-	void SetViewport();
+	void UpdateViewport();
 	void InitializeData();
 	void InitializePipeline();
 

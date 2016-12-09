@@ -22,31 +22,40 @@ std::vector<byte> LoadShaderFile(std::string fileName) {
 }
 
 void Demo::Initialize() {
+	InitializeDeviceAndDeviceContext();
 	InitializeSwapChain();
-	SetViewport();
+	UpdateViewport();
 	InitializeData();
 	InitializePipeline();
 }
 
-void Demo::InitializeSwapChain() {
-	ComPtr<ID3D11Device> device;
-	ComPtr<ID3D11DeviceContext> context;
+void Demo::InitializeDeviceAndDeviceContext() {
+	ComPtr<ID3D11Device> baseVersionDevice;
+	ComPtr<ID3D11DeviceContext> baseVersionDeviceContext;
+	
+	UINT creationFlags = 0;
 
-	D3D11CreateDevice(
+#if defined(_DEBUG)
+	creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
+
+	HRESULT hr = D3D11CreateDevice(
 		nullptr,
 		D3D_DRIVER_TYPE_HARDWARE,
 		nullptr,
-		0,
+		creationFlags,
 		nullptr,
 		0,
 		D3D11_SDK_VERSION,
-		&device,
+		&baseVersionDevice,
 		nullptr,
-		&context
+		&baseVersionDeviceContext
 	);
-	device.As(&this->device);
-	context.As(&this->deviceContext);
+	baseVersionDevice.As(&device);
+	baseVersionDeviceContext.As(&deviceContext);
+}
 
+void Demo::InitializeSwapChain() {
 	ComPtr<IDXGIDevice1> dxgiDevice;
 	this->device.As(&dxgiDevice);
 
@@ -77,7 +86,7 @@ void Demo::InitializeSwapChain() {
 	this->device->CreateRenderTargetView(backbuffer.Get(), nullptr, &renderTargetView);
 }
 
-void Demo::SetViewport() {
+void Demo::UpdateViewport() {
 	DisplayInformation^ displayInformation = DisplayInformation::GetForCurrentView();
 	float dpi = displayInformation->LogicalDpi;
 	CoreWindow^ Window = CoreWindow::GetForCurrentThread();
@@ -151,7 +160,7 @@ void Demo::Render() {
 }
 
 void Demo::Resize() {
-	swapChain->ResizeBuffers(
+	HRESULT hr = swapChain->ResizeBuffers(
 		2,
 		0,
 		0,
