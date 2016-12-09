@@ -87,10 +87,15 @@ void Demo::InitializeSwapChain() {
 }
 
 void Demo::InitializeData() {
+	InitializeVertexBuffer();
+	InitializeIndexBuffer();
+}
+
+void Demo::InitializeVertexBuffer() {
 	Vertex vertices[] = {
-		{0.0f, 0.5f, 0.5f},
-		{0.45f, -0.5f, 0.5f},
-		{-0.45f, -0.5f, 0.5f}
+		{ 0.0f, 0.5f, 0.5f },
+		{ 0.45f, -0.5f, 0.5f },
+		{ -0.45f, -0.5f, 0.5f }
 	};
 
 	D3D11_BUFFER_DESC bufferDesc = { 0 };
@@ -101,6 +106,21 @@ void Demo::InitializeData() {
 	subresourceData.pSysMem = vertices;
 
 	device->CreateBuffer(&bufferDesc, &subresourceData, &vertexBuffer);
+}
+
+void Demo::InitializeIndexBuffer() {
+	unsigned short indices[] = {
+		0, 1, 2
+	};
+
+	D3D11_BUFFER_DESC indexBufferDesc = { 0 };
+	indexBufferDesc.ByteWidth = sizeof(unsigned short) * ARRAYSIZE(indices);
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA indexBufferSubresourceData = { 0 };
+	indexBufferSubresourceData.pSysMem = indices;
+
+	device->CreateBuffer(&indexBufferDesc, &indexBufferSubresourceData, &indexBuffer);
 }
 
 void Demo::InitializePipeline() {
@@ -161,11 +181,12 @@ void Demo::Render() {
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
 	deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
+	deviceContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), nullptr);
 
-	deviceContext->Draw(3, 0);
+	deviceContext->DrawIndexed(3, 0, 0);
 
 	swapChain->Present(1, 0);
 }

@@ -11,6 +11,7 @@ class Demo {
 	ComPtr<IDXGISwapChain1> swapChain;
 	ComPtr<ID3D11RenderTargetView> renderTargetView;
 	ComPtr<ID3D11Buffer> vertexBuffer;
+	ComPtr<ID3D11Buffer> indexBuffer;
 	ComPtr<ID3D11VertexShader> vertexShader;
 	ComPtr<ID3D11PixelShader> pixelShader;
 	ComPtr<ID3D11InputLayout> inputLayout;
@@ -18,6 +19,8 @@ class Demo {
 	void InitializeDeviceDependentResources();
 	void InitializeDeviceAndDeviceContext();
 	void InitializeData();
+	void InitializeVertexBuffer();
+	void InitializeIndexBuffer();
 	void InitializePipeline();
 
 	void InitializeWindowSizeDependentResources();
