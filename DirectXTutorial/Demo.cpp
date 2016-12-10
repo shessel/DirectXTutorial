@@ -94,8 +94,8 @@ void Demo::InitializeData() {
 void Demo::InitializeVertexBuffer() {
 	Vertex vertices[] = {
 		{ { 0.0f, 0.5f, 0.5f }, {1.0f, 0.0f, 0.0f} },
-		{ { 0.45f, -0.5f, 0.5f },{ 1.0f, 0.0f, 0.0f } },
-		{ { -0.45f, -0.5f, 0.5f }, { 1.0f, 0.0f, 0.0f } }
+		{ { 0.45f, -0.5f, 0.5f },{ 0.0f, 1.0f, 0.0f } },
+		{ { -0.45f, -0.5f, 0.5f }, { 0.0f, 0.0f, 1.0f } }
 	};
 
 	D3D11_BUFFER_DESC bufferDesc = { 0 };
