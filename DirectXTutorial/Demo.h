@@ -9,11 +9,20 @@ using namespace Windows::Graphics::Display;
 using namespace Windows::UI::Core;
 using namespace DirectX;
 
+struct ConstantBufferData {
+	XMFLOAT4X4 model;
+	XMFLOAT4X4 view;
+	XMFLOAT4X4 projection;
+};
+
 class Demo {
 	ComPtr<ID3D11Device1> device;
 	ComPtr<ID3D11DeviceContext1> deviceContext;
 	ComPtr<IDXGISwapChain1> swapChain;
 	ComPtr<ID3D11RenderTargetView> renderTargetView;
+	ComPtr<ID3D11DepthStencilView> depthStencilView;
+	ComPtr<ID3D11Buffer> constantBuffer;
+	ConstantBufferData constantBufferData;
 	std::shared_ptr<Model> model;
 
 	void InitializeDeviceDependentResources();
@@ -21,16 +30,10 @@ class Demo {
 
 	void InitializeWindowSizeDependentResources();
 	void InitializeSwapChain();
-	void InitializeBackbuffer();
+	void InitializeViews();
 	void InitializeViewport();
 
 	void UnbindWindowSizeDependentResources();
-
-	struct Vertex {
-		XMFLOAT3 pos;
-		XMFLOAT3 col;
-	};
-
 public:
 	void Initialize();
 	void Update();

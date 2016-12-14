@@ -67,14 +67,40 @@ void Demo::InitializeSwapChain() {
 }
 
 void Demo::InitializeWindowSizeDependentResources() {
-	InitializeBackbuffer();
+	InitializeViews();
 	InitializeViewport();
 }
 
-void Demo::InitializeBackbuffer() {
+void Demo::InitializeViews() {
 	ComPtr<ID3D11Texture2D> backbuffer;
 	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), &backbuffer);
+
+	D3D11_TEXTURE2D_DESC backBufferDesc = { 0 };
+	backbuffer->GetDesc(&backBufferDesc);
+
 	device->CreateRenderTargetView(backbuffer.Get(), nullptr, &renderTargetView);
+
+	D3D11_TEXTURE2D_DESC depthStencilDesc = { 0 };
+	depthStencilDesc.Width = backBufferDesc.Width;
+	depthStencilDesc.Height = backBufferDesc.Height;
+	depthStencilDesc.MipLevels = 1;
+	depthStencilDesc.ArraySize = 1;
+	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilDesc.SampleDesc.Count = 1;
+	depthStencilDesc.SampleDesc.Quality = 0;
+	depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+	depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	depthStencilDesc.CPUAccessFlags = 0;
+	depthStencilDesc.MiscFlags = 0;
+	ComPtr<ID3D11Texture2D> depthStencil;
+	device->CreateTexture2D(&depthStencilDesc, nullptr, &depthStencil);
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
+	depthStencilViewDesc.Format = depthStencilDesc.Format;
+	depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	depthStencilViewDesc.Flags = 0;
+	depthStencilViewDesc.Texture2D.MipSlice = 0;
+	device->CreateDepthStencilView(depthStencil.Get(), &depthStencilViewDesc, &depthStencilView);
 }
 
 void Demo::InitializeViewport() {
@@ -96,7 +122,8 @@ void Demo::Update() {
 void Demo::Render() {	
 	float color[4] = { 0.1f, 0.2f, 0.3f, 1.0f };
 	deviceContext->ClearRenderTargetView(renderTargetView.Get(), color);
-	deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), nullptr);
+	deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+	deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), depthStencilView.Get());
 
 	model->Render();
 

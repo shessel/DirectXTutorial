@@ -20,6 +20,7 @@ class Model {
 		XMFLOAT3 pos;
 		XMFLOAT3 col;
 	};
+
 public:
 	Model(ComPtr<ID3D11Device1> device, ComPtr<ID3D11DeviceContext1> deviceContext) :
 		device(device), deviceContext(deviceContext) {};
