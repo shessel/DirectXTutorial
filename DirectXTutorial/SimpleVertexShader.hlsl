@@ -1,3 +1,9 @@
+cbuffer ConstantBuffer : register(b0) {
+	matrix Model;
+	matrix View;
+	matrix Projection;
+}
+
 struct VertexShaderInput {
 	float3 pos : POSITION;
 	float3 col : COLOR0;
@@ -10,7 +16,9 @@ struct PixelShaderInput {
 
 PixelShaderInput main(VertexShaderInput input) {
 	PixelShaderInput output;
-	output.pos = float4(input.pos, 1.0f);
+	output.pos = mul(float4(input.pos, 1.0f), Model);
+	output.pos = mul(output.pos, View);
+	output.pos = mul(output.pos, Projection);
 	output.col = input.col;
 	return output;
 }

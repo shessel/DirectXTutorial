@@ -11,6 +11,7 @@ void Demo::Initialize() {
 void Demo::InitializeDeviceDependentResources() {
 	InitializeDeviceAndDeviceContext();
 	InitializeSwapChain();
+	InitializeConstantBuffer();
 }
 
 void Demo::InitializeDeviceAndDeviceContext() {
@@ -66,6 +67,22 @@ void Demo::InitializeSwapChain() {
 	);
 }
 
+void Demo::InitializeConstantBuffer() {
+	D3D11_BUFFER_DESC constantBufferDesc = { 0 };
+	constantBufferDesc.ByteWidth = sizeof(constantBufferData);
+	constantBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	constantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	constantBufferDesc.CPUAccessFlags = 0;
+	constantBufferDesc.MiscFlags = 0;
+	constantBufferDesc.StructureByteStride = 0;
+	device->CreateBuffer(&constantBufferDesc, nullptr, &constantBuffer);
+
+	XMVECTOR position = XMVectorSet(0.0f, 0.0f, 2.0f, 0.0f);
+	XMVECTOR at = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	constantBufferData.view = XMMatrixTranspose(XMMatrixLookAtRH(position, at, up));
+}
+
 void Demo::InitializeWindowSizeDependentResources() {
 	InitializeViews();
 	InitializeViewport();
@@ -114,16 +131,23 @@ void Demo::InitializeViewport() {
 	viewport.Width = Window->Bounds.Width * dpi / 96.0f;
 	viewport.Height = Window->Bounds.Height * dpi / 96.0f;
 	deviceContext->RSSetViewports(1, &viewport);
+
+	constantBufferData.projection = XMMatrixTranspose(XMMatrixPerspectiveFovRH(45.0f, viewport.Width/viewport.Height, 0.1f, 10.0f));
 }
 
 void Demo::Update() {
+	static float degrees = 0.0f;
+	degrees += 1.0f;
+	constantBufferData.model = XMMatrixTranspose(XMMatrixRotationY(XMConvertToRadians(degrees)));
+	deviceContext->UpdateSubresource(constantBuffer.Get(), 0, nullptr, &constantBufferData, 0, 0);
 }
 
-void Demo::Render() {	
-	float color[4] = { 0.1f, 0.2f, 0.3f, 1.0f };
-	deviceContext->ClearRenderTargetView(renderTargetView.Get(), color);
+void Demo::Render() {
+	float clearColor[4] = { 0.1f, 0.2f, 0.3f, 1.0f };
+	deviceContext->ClearRenderTargetView(renderTargetView.Get(), clearColor);
 	deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 	deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), depthStencilView.Get());
+	deviceContext->VSSetConstantBuffers(0, 1, constantBuffer.GetAddressOf());
 
 	model->Render();
 

@@ -10,9 +10,9 @@ using namespace Windows::UI::Core;
 using namespace DirectX;
 
 struct ConstantBufferData {
-	XMFLOAT4X4 model;
-	XMFLOAT4X4 view;
-	XMFLOAT4X4 projection;
+	XMMATRIX model;
+	XMMATRIX view;
+	XMMATRIX projection;
 };
 
 class Demo {
@@ -30,6 +30,7 @@ class Demo {
 
 	void InitializeWindowSizeDependentResources();
 	void InitializeSwapChain();
+	void InitializeConstantBuffer();
 	void InitializeViews();
 	void InitializeViewport();
 
