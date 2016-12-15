@@ -13,6 +13,9 @@ class Model {
 	ComPtr<ID3D11VertexShader> vertexShader;
 	ComPtr<ID3D11PixelShader> pixelShader;
 	ComPtr<ID3D11InputLayout> inputLayout;
+	ComPtr<ID3D11Texture2D> texture;
+	ComPtr<ID3D11ShaderResourceView> textureView;
+	ComPtr<ID3D11SamplerState> samplerState;
 	ComPtr<ID3D11Buffer> indexBuffer;
 	ComPtr<ID3D11Buffer> vertexBuffer;
 	size_t numIndices;
@@ -20,6 +23,7 @@ class Model {
 	struct Vertex {
 		XMFLOAT3 pos;
 		XMFLOAT3 col;
+		XMFLOAT2 texCoords;
 	};
 
 public:
@@ -28,6 +32,7 @@ public:
 	void Initialize();
 	void InitializeShaders();
 	void InitializeData();
+	void InitializeTextures();
 	void InitializeVertexBuffer();
 	void InitializeIndexBuffer();
 	void Render();
