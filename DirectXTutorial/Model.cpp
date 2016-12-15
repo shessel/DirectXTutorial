@@ -61,9 +61,14 @@ void Model::InitializeData() {
 
 void Model::InitializeVertexBuffer() {
 	Vertex vertices[] = {
-		{ { 0.0f, -0.5f, 0.5f },{ 1.0f, 0.0f, 0.0f } },
-		{ { -0.45f, 0.5f, 0.5f },{ 0.0f, 1.0f, 0.0f } },
-		{ { 0.45f, 0.5f, 0.5f },{ 0.0f, 0.0f, 1.0f } }
+		{ { -0.5f, 0.5f, -0.5f },{ 1.0f, 0.0f, 0.0f } },
+		{ { 0.5f, 0.5f, -0.5f },{ 1.0f, 0.0f, 0.0f } },
+		{ { 0.5f, 0.5f,  0.5f },{ 1.0f, 0.0f, 0.0f } },
+		{ { -0.5f, 0.5f,  0.5f }, { 1.0f, 0.0f, 0.0f } },
+		{ { -0.5f, -0.5f,  0.5f },{ 0.0f, 1.0f, 0.0f } },
+		{ { 0.5f, -0.5f,  0.5f },{ 0.0f, 1.0f, 0.0f } },
+		{ { 0.5f, -0.5f, -0.5f },{ 0.0f, 1.0f, 0.0f } },
+		{ { -0.5f, -0.5f, -0.5f }, { 0.0f, 1.0f, 0.0f } }
 	};
 
 	D3D11_BUFFER_DESC bufferDesc = { 0 };
@@ -78,11 +83,28 @@ void Model::InitializeVertexBuffer() {
 
 void Model::InitializeIndexBuffer() {
 	unsigned short indices[] = {
-		0, 1, 2
+		0, 1, 2,
+		0, 2, 3,
+
+		4, 5, 6,
+		4, 6, 7,
+
+		3, 2, 5,
+		3, 5, 4,
+
+		2, 1, 6,
+		2, 6, 5,
+
+		1, 7, 6,
+		1, 0, 7,
+
+		0, 3, 4,
+		0, 4, 7
 	};
 
+	numIndices = ARRAYSIZE(indices);
 	D3D11_BUFFER_DESC indexBufferDesc = { 0 };
-	indexBufferDesc.ByteWidth = sizeof(unsigned short) * ARRAYSIZE(indices);
+	indexBufferDesc.ByteWidth = sizeof(unsigned short) * numIndices;
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
 	D3D11_SUBRESOURCE_DATA indexBufferSubresourceData = { 0 };
@@ -102,5 +124,5 @@ void Model::Render() {
 	deviceContext->VSSetShader(vertexShader.Get(), nullptr, 0);
 	deviceContext->PSSetShader(pixelShader.Get(), nullptr, 0);
 
-	deviceContext->DrawIndexed(3, 0, 0);
+	deviceContext->DrawIndexed(numIndices, 0, 0);
 }

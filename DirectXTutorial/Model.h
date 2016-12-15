@@ -15,6 +15,7 @@ class Model {
 	ComPtr<ID3D11InputLayout> inputLayout;
 	ComPtr<ID3D11Buffer> indexBuffer;
 	ComPtr<ID3D11Buffer> vertexBuffer;
+	size_t numIndices;
 
 	struct Vertex {
 		XMFLOAT3 pos;
