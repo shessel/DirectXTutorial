@@ -138,7 +138,9 @@ void Demo::InitializeViewport() {
 void Demo::Update() {
 	static float degrees = 0.0f;
 	degrees += 1.0f;
-	constantBufferData.model = XMMatrixTranspose(XMMatrixRotationY(XMConvertToRadians(degrees)));
+	constantBufferData.model = XMMatrixRotationY(XMConvertToRadians(degrees));
+	constantBufferData.model *= XMMatrixRotationX(XMConvertToRadians(3.0f*0.3141529f*degrees));
+	constantBufferData.model = XMMatrixTranspose(constantBufferData.model);
 	deviceContext->UpdateSubresource(constantBuffer.Get(), 0, nullptr, &constantBufferData, 0, 0);
 }
 
